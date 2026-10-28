@@ -1,0 +1,26 @@
+#!/bin/sh
+# 用真正的 app（读配置、带翻转）跑，落一张带检测框的图
+python3 - <<'PY'
+import json
+p = '/etc/openrm/Config.json'
+d = json.load(open(p))
+d['Debug']['ImageThread']['Imwrite'] = True
+d['Debug']['ImageThread']['FPS'] = 15
+json.dump(d, open(p, 'w'), indent=4, ensure_ascii=False)
+print('FlipMode =', d['Camera']['Base'].get('FlipMode'), '| Imwrite =', d['Debug']['ImageThread']['Imwrite'])
+PY
+rm -f /etc/openrm/debug/*.jpg
+pkill TJURM-2024 2>/dev/null || true
+sleep 1
+if ! pgrep -f "Xtigervnc :1" >/dev/null; then
+    setsid Xtigervnc :1 -geometry 1440x1080 -depth 24 -rfbport 5901 \
+        -AlwaysShared -PasswordFile /root/.vnc/passwd < /dev/null > /tmp/vnc.log 2>&1 &
+    sleep 2
+fi
+cd /etc/openrm
+DISPLAY=:1 setsid TJURM-2024 -s < /dev/null > /tmp/tjurm_det.log 2>&1 &
+sleep 8
+echo "images: $(ls /etc/openrm/debug/*.jpg 2>/dev/null | wc -l)"
+ls /etc/openrm/debug/*.jpg 2>/dev/null | tail -1 | while read f; do cp "$f" /root/smoke/app_det.jpg; done
+ls -l /root/smoke/app_det.jpg 2>/dev/null
+grep -v -E "no version" /tmp/tjurm_det.log | tail -2

@@ -132,7 +132,7 @@
             "Gamma": 100,
             "Sharpness": 16,
             "Backlight": 1,
-            "FlipMode": 1
+            "FlipMode": 3
         },
         "Far": {
             "CameraType": "UVC720_540",
@@ -148,7 +148,7 @@
             "ApplyV4L2Controls": false,
             "ExposureTime": 3000.0,
             "Gain": 5.0,
-            "FlipMode": 1
+            "FlipMode": 3
         },
         "Switch": {
             "BaseToFarDist": 7.0,
