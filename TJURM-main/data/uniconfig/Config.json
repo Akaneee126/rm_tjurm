@@ -131,7 +131,8 @@
             "Contrast": 32,
             "Gamma": 100,
             "Sharpness": 16,
-            "Backlight": 1
+            "Backlight": 1,
+            "FlipMode": 1
         },
         "Far": {
             "CameraType": "UVC720_540",
@@ -146,7 +147,8 @@
             "AutoWhiteBalance": false,
             "ApplyV4L2Controls": false,
             "ExposureTime": 3000.0,
-            "Gain": 5.0
+            "Gain": 5.0,
+            "FlipMode": 1
         },
         "Switch": {
             "BaseToFarDist": 7.0,

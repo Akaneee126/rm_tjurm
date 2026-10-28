@@ -65,6 +65,8 @@ bool openVideoFile(rm::Camera* camera, const nlohmann::json& cfg, int index) {
     camera->height = static_cast<int>(cap->get(cv::CAP_PROP_FRAME_HEIGHT));
     camera->capture_format = 0;
     camera->uvc_capture = false;
+    // 安装姿态补偿（1=上下翻 2=左右镜像 3=180°），在采帧线程里应用
+    camera->flip_mode = static_cast<int>(cfgNumber(cfg, "FlipMode", cfgBool(cfg, "Rotate", false) ? 1.0 : 0.0));
 
     if (camera->buffer != nullptr) delete camera->buffer;
     camera->buffer = new rm::SwapBuffer<rm::Frame>();
@@ -93,6 +95,9 @@ bool openVideoFile(rm::Camera* camera, const nlohmann::json& cfg, int index) {
             frame->height = img.rows;
             frame->yaw = frame->pitch = frame->roll = 0.0f;
             frame->locate = rm::Locate{};
+            if (camera->flip_mode == 1)      cv::flip(img, img, 0);
+            else if (camera->flip_mode == 2) cv::flip(img, img, 1);
+            else if (camera->flip_mode == 3) cv::flip(img, img, -1);
             frame->image = std::make_shared<cv::Mat>(img);
             camera->buffer->push(frame);
             std::this_thread::sleep_for(std::chrono::milliseconds(delay_ms));
@@ -116,6 +121,9 @@ bool openCameraByDriver(
     const double fps      = cfgNumber(cfg, "FrameRate", 60.0);
     const bool   rotate   = cfgBool(cfg, "Rotate", false);
     const bool   awb      = cfgBool(cfg, "AutoWhiteBalance", false);
+
+    // 安装姿态补偿：1=上下翻(Y轴) 2=左右镜像(X轴) 3=180°；兼容旧的 Rotate
+    camera->flip_mode = static_cast<int>(cfgNumber(cfg, "FlipMode", rotate ? 1.0 : 0.0));
 
     switch (driver) {
         case CameraDriver::VIDEO:

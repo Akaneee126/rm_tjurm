@@ -20,7 +20,10 @@ public:
     int camera_id = 1;                                      // 相机id
     int file_descriptor;                                    // 相机的文件描述符
 
-    bool flip = false;                                      // 是否翻转图像
+    bool flip = false;                                      // 是否翻转图像（旧字段，等价于 flip_mode=1）
+
+    // 相机安装姿态不对时的翻转：0=不翻转 1=Y轴/上下翻 2=X轴/左右镜像 3=两者(180°)
+    int flip_mode = 0;
 
     SwapBuffer<Frame>* buffer = nullptr;                    // 帧双缓冲区
 

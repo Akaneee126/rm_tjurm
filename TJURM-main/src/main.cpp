@@ -43,6 +43,19 @@ int main(int argc, char** argv) {
                 break;
         }
     }
+
+    // 无显示环境时 OpenCV 的 Qt 后端会直接 abort（qt.qpa.xcb: could not connect to display），
+    // 这里提前降级成"不弹窗"，程序照常跑（存图 / 参数面板不受影响）。
+    // 想看图：起一个虚拟显示（Xtigervnc :1）后 DISPLAY=:1 再带 -s；
+    //         或者用 ssh -X 转发、接 HDMI 显示器。
+    if (Data::imshow_flag) {
+        const char* display = std::getenv("DISPLAY");
+        if (display == nullptr || display[0] == '\0') {
+            rm::message("No DISPLAY in env, imshow disabled (use VNC / ssh -X / HDMI monitor)",
+                        rm::MSG_WARNING);
+            Data::imshow_flag = false;
+        }
+    }
     
     while(true) if(init_camera()) break;
 

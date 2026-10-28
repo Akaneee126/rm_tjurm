@@ -1,5 +1,6 @@
 #include "threads/pipeline.h"
 #include <string>
+#include <cstdio>
 #include <thread>
 #include <chrono>
 
@@ -26,18 +27,18 @@ void Pipeline::image_thread() {
     bool light_flag = (*param)["Debug"]["ImageThread"]["Light"];
     double scale = (*param)["Debug"]["ImageThread"]["Scale"];
 
-    int delay = 1000 / fps;
+    int delay = (fps > 0) ? (1000 / fps) : 40;
 
     while(true) {
         while(!imshow_in_) {}
 
         cv::Mat image = *(this->imshow_register_->image);
-        
+
         if (image.empty()) {
-            std::cout << "图像为空，无法显示" << std::endl;
+            std::cout << "image_thread: empty image" << std::endl;
             continue;
         } else if (image.type() != CV_8UC1 && image.type() != CV_8UC3 && image.type() != CV_32FC1 && image.type() != CV_32FC3) {
-            std::cout << "图像类型不受支持，无法显示" << std::endl;
+            std::cout << "image_thread: unsupported image type" << std::endl;
             continue;
         } else {
             cv::Mat resized_image;
@@ -53,18 +54,39 @@ void Pipeline::image_thread() {
             }
 
             if (Data::imshow_flag || Data::imwrite_flag) {
-            	// 添加中心绿色瞄准点
-            	int centerX = resized_image.cols / 2;
-            	int centerY = resized_image.rows / 2;
-            	int size = 10; // 瞄准点大小
-            	cv::Scalar green(0, 255, 0); // 绿色
-            	
-            	// 绘制十字准心
-            	cv::line(resized_image, cv::Point(centerX - size, centerY), cv::Point(centerX + size, centerY), green, 1);
-            	cv::line(resized_image, cv::Point(centerX, centerY - size), cv::Point(centerX, centerY + size), green, 1);
-            	
-            	// 添加小圆圈增强可视性
-            	cv::circle(resized_image, cv::Point(centerX, centerY), 2, green, 1);
+                // 中心十字准星
+                int centerX = resized_image.cols / 2;
+                int centerY = resized_image.rows / 2;
+                int size = 10;
+                cv::Scalar green(0, 255, 0);
+
+                cv::line(resized_image, cv::Point(centerX - size, centerY),
+                         cv::Point(centerX + size, centerY), green, 1);
+                cv::line(resized_image, cv::Point(centerX, centerY - size),
+                         cv::Point(centerX, centerY + size), green, 1);
+                cv::circle(resized_image, cv::Point(centerX, centerY), 2, green, 1);
+
+                // 把检测结果画出来（原版这里只画准星，看不到框）
+                for (const auto& yolo : this->imshow_register_->yolo_list) {
+                    if (yolo.four_points.size() == 4) {
+                        std::vector<cv::Point> poly;
+                        for (const auto& p : yolo.four_points) {
+                            poly.push_back(cv::Point((int)(p.x * scale), (int)(p.y * scale)));
+                        }
+                        // 蓝方 / 红方用不同颜色
+                        cv::Scalar color = (yolo.color_id == 1) ? cv::Scalar(0, 0, 255)
+                                                                : cv::Scalar(255, 128, 0);
+                        cv::polylines(resized_image, poly, true, color, 2);
+                        char label[32];
+                        snprintf(label, sizeof(label), "%d c%.2f", yolo.class_id, yolo.confidence);
+                        cv::putText(resized_image, label, poly[0], cv::FONT_HERSHEY_SIMPLEX,
+                                    0.4, color, 1);
+                    } else if (yolo.box.width > 0) {
+                        cv::Rect r((int)(yolo.box.x * scale), (int)(yolo.box.y * scale),
+                                   (int)(yolo.box.width * scale), (int)(yolo.box.height * scale));
+                        cv::rectangle(resized_image, r, cv::Scalar(255, 128, 0), 2);
+                    }
+                }
 
                 std::vector<std::string> lines;
                 if(Data::target_id != rm::ARMOR_ID_UNKNOWN) {
@@ -78,18 +100,15 @@ void Pipeline::image_thread() {
                 cv::imshow("tjurm2024frame", resized_image);
                 cv::waitKey(1);
             }
-            
+
             if (Data::imwrite_flag) {
                 std::string path = imwrite_dir + "/" + getMsStr() + ".jpg";
                 cv::imwrite(path, resized_image);
             }
 
-
             imshow_in_ = false;
-            
+
             std::this_thread::sleep_for(std::chrono::milliseconds(delay));
-            
         }
-        
     }
 }

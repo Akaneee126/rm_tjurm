@@ -102,8 +102,16 @@ static void onFrameCallback(unsigned char* pData, MV_FRAME_OUT_INFO_EX* pFrameIn
 
     MV_CC_ConvertPixelType(hikvision_map[callback_param->camera->camera_id], &cvtParam);
 
-    if (callback_param->flip) {
+    // 相机安装姿态补偿：1=上下翻(Y轴) 2=左右镜像(X轴) 3=180°
+    // 兼容旧字段 flip（等价于 1）
+    int flip_mode = callback_param->camera->flip_mode;
+    if (flip_mode == 0 && callback_param->flip) flip_mode = 1;
+    if (flip_mode == 1) {
         cv::flip(*frame->image, *frame->image, 0);
+    } else if (flip_mode == 2) {
+        cv::flip(*frame->image, *frame->image, 1);
+    } else if (flip_mode == 3) {
+        cv::flip(*frame->image, *frame->image, -1);
     }
 
     callback_param->camera->buffer->push(frame);
