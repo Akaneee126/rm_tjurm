@@ -1,0 +1,15 @@
+[Unit]
+Description=Start TJURM script in a tmux session
+After=network.target
+
+[Service]
+Type=forking
+User=root
+WorkingDirectory=/home/nvidia/Workspace/TJURM
+ExecStart=/usr/bin/tmux new-session -d -s TJURM '/etc/openrm/guard.sh'
+ExecStop=/usr/bin/tmux kill-session -t TJURM
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+

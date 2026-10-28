@@ -1,0 +1,1 @@
+{"model_name": "0526_qcs6490_w8a16.qnn231.ctx.bin", "data_type": "w8a16", "inputDimensions": {"images": [1, 640, 640, 3]}, "outputDimensions": {"output": [1, 25200, 22]}, "htp_socs_name": "QCS6490", "htp_socs_type": "sm7325", "qnn_sdk": "2.31.0.250130"}

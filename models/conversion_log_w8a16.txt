@@ -1,0 +1,9 @@
+2026-10-28 22:00:36,641 - INFO : Optimization started.
+2026-10-28 22:00:36,654 - INFO : [ONNX-SIM] Clean ONNX Model input node.
+2026-10-28 22:00:37,264 - INFO : [ONNX2QNN] Start converting to QNN.
+2026-10-28 22:00:52,085 - INFO : [CONVERT-QNN] Convert model is done. Begin to compile model.
+2026-10-28 22:01:10,706 - INFO : [COMPILE-QNN] Compile model is done. Begin to create serialization file.
+2026-10-28 22:01:12,330 - INFO : [CREATE-CONTEXT-BINARY] Create context binary is done.
+2026-10-28 22:01:12,401 - INFO : [ONNX2QNN] QNN conversion is done.
+2026-10-28 22:01:12,401 - INFO : [ONNX2QNN] QNN conversion is done.
+2026-10-28 22:01:12,401 - INFO : Model optimization done.

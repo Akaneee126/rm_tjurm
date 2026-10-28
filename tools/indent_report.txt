@@ -1,0 +1,38 @@
+﻿== OpenRM-main\OpenRM-main\src\infer\nms.cpp  (16 line(s))
+      46 |     if (width_ratio > height_ratio) {
+     108 |     int x1 = std::max(box1.x, box2.x);
+     111 |     int x2 = std::min(box1.x + box1.width, box2.x + box2.width);
+     129 |         yolofpRaw* yolo_raw = (yolofpRaw*)(output_buffer + i * yolo_size);
+     148 |         bool flag_pose = true;
+     160 |         YoloRect detection_rect;
+     177 |         yolov5Raw* yolo_raw = (yolov5Raw*)(output_buffer + i * yolo_size);
+     195 |         YoloRect detection_rect;
+     210 |         yolofpRaw* yolo_raw = (yolofpRaw*)(output_buffer + i * yolo_size);
+     216 |         int color_index = -1;
+     230 |         int class_index = -1;
+     244 |         bool flag_pose = true;
+     256 |         YoloRect detection_rect;
+     286 |     if (list.size() <= 1) return;
+     289 |     YoloRect focus_rect = list[0];
+     292 |     retained_list = std::vector<YoloRect>();
+== OpenRM-main\OpenRM-main\src\infer\nmsV5C36.cpp  (13 line(s))
+      61 |     if (width_ratio > height_ratio) {
+     105 |     int x1 = std::max(box1.x, box2.x);
+     108 |     int x2 = std::min(box1.x + box1.width, box2.x + box2.width);
+     126 |         if (output_buffer[i * yolo_size + 4] < confidence_threshold) {
+     131 |         yoloArmorRaw_V5C36* yolo_raw = (yoloArmorRaw_V5C36*)(output_buffer + i * yolo_size);
+     146 |         YoloRect detection_rect;
+     159 |     for (auto& detection_rect_list: detection_class_list) {
+     181 |     for (auto& detection_rect_list: detection_class_list) {
+     187 |         YoloRect focus_rect = detection_rect_list[0];
+     190 |         retained_rect_list = std::vector<YoloRect>();
+     246 |             if (result_rect_list.empty()) {
+     272 |                     avaliable_rect = false;
+     313 |     std::vector<YoloRect> result_rect_list;
+== OpenRM-main\OpenRM-main\src\uniterm\dashboard.cpp  (1 line(s))
+      33 |     init_pair(1, COLOR_WHITE, COLOR_RED);
+== OpenRM-main\OpenRM-main\src\uniterm\oscilloscope.cpp  (3 line(s))
+      87 |             for(int j = 0; j < canvas_w; j++) {
+      94 |         for (int i = 0; i < h - 1; i++) mvprintw(i, 5, "|");
+     104 |         for (size_t i = 0; i < msg_name.size(); i++) {
+dry-run

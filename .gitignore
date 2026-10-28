@@ -1,0 +1,35 @@
+# ---- 绂荤嚎渚濊禆鍖咃細浣撶Н澶э紝涓嶅叆搴擄紙瑙?DEPS/README.md锛?----
+DEPS/apt-arm64/
+DEPS/hikrobot-sdk-arm64/lib/
+DEPS/aidlite/
+
+# ---- 鏉垮瓙缁戝畾 / 澶т綋绉骇鐗?----
+models/*.aidem
+*.zip
+*.ppm
+*.avi
+
+# ---- 鏋勫缓浜х墿 ----
+build/
+*.o
+*.a
+*.so
+*.so.*
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+
+# ---- 鑴氭湰杩愯鏃剁殑涓存椂鐩綍 ----
+tools/board/debs/
+tools/board/sdk/
+
+# ---- 缂栬緫鍣?/ 绯荤粺 ----
+.vscode/
+.idea/
+Thumbs.db
+.DS_Store
+
+# ---- 涓烘帹閫佸噯澶囩殑鍗曟枃浠?bundle ----
+*.bundle
+
